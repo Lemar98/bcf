@@ -112,7 +112,7 @@ public class IntegerParser extends BaseParser<Object, Integer> implements Parser
           .getCompletionCandidates()
           .add(
               new DefaultCompletionCandidate(
-                  "", getPlaceholder() != null ? getPlaceholder() : "<number>"));
+                  /*"", */getPlaceholder() != null ? getPlaceholder() : "<number>"));
     }
     candidates.add(group);
   }

@@ -99,7 +99,7 @@ public class FloatParser extends BaseParser<Object, Float> implements ParserMinM
         .getCompletionCandidates()
         .add(
             new DefaultCompletionCandidate(
-                "", getPlaceholder() != null ? getPlaceholder() : "<float>"));
+                /*"", */getPlaceholder() != null ? getPlaceholder() : "<float>"));
     candidates.add(group);
   }
 }

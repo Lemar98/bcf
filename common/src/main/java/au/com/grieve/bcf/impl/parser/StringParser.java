@@ -97,7 +97,7 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
           .getCompletionCandidates()
           .add(
               new DefaultCompletionCandidate(
-                  "", getPlaceholder() != null ? getPlaceholder() : "<string>"));
+                  /*"", */getPlaceholder() != null ? getPlaceholder() : "<string>"));
       candidates.add(group);
     }
   }

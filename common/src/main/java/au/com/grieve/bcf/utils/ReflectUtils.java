@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.utils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,7 +34,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReflectUtils {
-  /** Get all super classes */
+  /**
+   * Get all super classes
+   */
   public static Class<?>[] getAllSuperClasses(Class<?> clz) {
     List<Class<?>> list = new ArrayList<>();
     while ((clz = clz.getSuperclass()) != null) {
@@ -42,7 +45,9 @@ public class ReflectUtils {
     return list.toArray(new Class<?>[0]);
   }
 
-  /** Get all interfaces */
+  /**
+   * Get all interfaces
+   */
   public static Class<?>[] getAllInterfaces(Class<?> clz) {
     Set<Class<?>> set = new HashSet<>();
     getAllInterfaces(clz, set);
@@ -52,16 +57,16 @@ public class ReflectUtils {
   /**
    * Return a list of found annotations on the class and all super classes
    *
-   * @param <A> The type of annotation being queried
-   * @param clz Class to query on
+   * @param <A>             The type of annotation being queried
+   * @param clz             Class to query on
    * @param annotationClass The annotation being queried
    * @return Array of annotations
    */
   public static <A extends Annotation> List<A> getAllAnnotationsByType(
-      Class<?> clz, Class<A> annotationClass) {
+          Class<?> clz, Class<A> annotationClass) {
     return Stream.concat(Stream.of(clz), Stream.of(getAllSuperClasses(clz)))
-        .flatMap(c -> Arrays.stream(c.getAnnotationsByType(annotationClass)).sequential())
-        .collect(Collectors.toList());
+            .flatMap(c -> Arrays.stream(c.getAnnotationsByType(annotationClass)).sequential())
+            .collect(Collectors.toList());
   }
 
   private static void getAllInterfaces(Class<?> clz, Set<Class<?>> visited) {
@@ -73,5 +78,15 @@ public class ReflectUtils {
         getAllInterfaces(c, visited);
       }
     }
+  }
+
+  public static Object getPrivateField(Object object, String field) throws SecurityException,
+          NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    Class<?> clazz = object.getClass();
+    Field objectField = clazz.getDeclaredField(field);
+    objectField.setAccessible(true);
+    Object result = objectField.get(object);
+    objectField.setAccessible(false);
+    return result;
   }
 }

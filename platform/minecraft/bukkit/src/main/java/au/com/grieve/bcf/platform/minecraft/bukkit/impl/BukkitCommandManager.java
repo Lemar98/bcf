@@ -34,14 +34,20 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import au.com.grieve.bcf.utils.ReflectUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import static au.com.grieve.bcf.utils.ReflectUtils.getPrivateField;
 
 /** Uses the built-in CommandMap to implement commands */
 @Getter
@@ -69,7 +75,7 @@ public class BukkitCommandManager extends BaseCommandManager<CommandSender> {
 
   /** Hook into the Bukkit Command Map */
   protected CommandMap hookCommandMap() {
-    CommandMap commandMap;
+    /*CommandMap commandMap;
     Server server = Bukkit.getServer();
     Method getCommandMap;
     try {
@@ -84,8 +90,8 @@ public class BukkitCommandManager extends BaseCommandManager<CommandSender> {
         | NoSuchFieldException e) {
       throw new RuntimeException("Cannot Hook CommandMap", e);
     }
-
-    return commandMap;
+*/
+    return Bukkit.getCommandMap();// commandMap;
   }
 
   @Override
@@ -115,6 +121,27 @@ public class BukkitCommandManager extends BaseCommandManager<CommandSender> {
 
   @Override
   protected void removeCommand(Command<CommandSender> command) {
+    CommandData<CommandSender> commandData = commandDataMap.get(command);
+    if (commandData == null) {
+      return;
+    }
+
+    commandData
+            .getCommandRootData()
+            .forEach(
+                    crd -> {
+                      plugin.getLogger().info("Unregistering command: " + crd.getName());
+                      BukkitCommandShim commandShim = commandShimMap.get(crd.getName());
+                      Map<String, org.bukkit.command.Command> map = Bukkit.getCommandMap().getKnownCommands();
+                      map.remove(commandShim.getName());
+                      for (String alias : commandShim.getAliases()){
+                        if(map.containsKey(alias) && map.get(alias).toString().contains(plugin.getName())){
+                          map.remove(alias);
+                        }
+                      }
+                      commandShimMap.remove(crd.getName());
+                    });
+
     // Bukkit CommandMap doesn't support unregistering a command but we can sorta make it ignore
     // parameters
     //

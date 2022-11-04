@@ -100,7 +100,7 @@ public class DoubleParser extends BaseParser<Object, Double> implements ParserMi
         .getCompletionCandidates()
         .add(
             new DefaultCompletionCandidate(
-                "", getPlaceholder() != null ? getPlaceholder() : "<float>"));
+                /*"", */getPlaceholder() != null ? getPlaceholder() : "<float>"));
     candidates.add(group);
   }
 }

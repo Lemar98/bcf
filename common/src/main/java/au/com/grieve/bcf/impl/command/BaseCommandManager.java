@@ -130,7 +130,7 @@ public abstract class BaseCommandManager<DATA>
       return;
     }
     classCommandMap.get(command.getClass()).remove(command);
-    if (classCommandMap.get(command.getClass()).size() == 0) {
+    if (classCommandMap.get(command.getClass()).isEmpty()) {
       classCommandMap.remove(command.getClass());
     }
 
